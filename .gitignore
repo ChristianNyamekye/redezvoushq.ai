@@ -22,3 +22,4 @@ bower_components/
 *.app
 *.exe
 *.war
+assets/vendor/

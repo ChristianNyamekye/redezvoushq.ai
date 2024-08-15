@@ -62,7 +62,7 @@
 //   }
 // }
 
-rrequire('dotenv').config()
+require('dotenv').config()
 const fetch = require('node-fetch')
 const querystring = require('querystring') // Ensure you require querystring at the top
 

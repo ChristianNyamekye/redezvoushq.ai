@@ -1,4 +1,4 @@
-const fetch = (await import('node-fetch')).default
+const fetch = require('node-fetch')
 
 exports.handler = async function (event, context) {
   const webhookUrl = process.env.ZAPIER_WEBHOOK_URL

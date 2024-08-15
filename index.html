@@ -2010,28 +2010,41 @@
             <div class="col-xl-5 col-md-6">
               <div class="ps-lg-5 ms-xl-2">
                 <form
+                  id="waitlist-form"
                   class="input-group input-group-lg needs-validation"
                   novalidate
                 >
                   <input
                     type="email"
                     id="subscr-email"
+                    name="email"
                     class="form-control rounded-start ps-5"
                     placeholder="Your email"
                     required
                   />
-                  <i
-                    class="bx bx-envelope fs-xl text-muted position-absolute top-50 start-0 translate-middle-y ms-3 zindex-5"
-                  ></i>
-                  <div
-                    class="invalid-tooltip position-absolute top-100 start-0"
-                  >
-                    Please provide a valid email address.
-                  </div>
                   <button type="submit" class="btn btn-primary px-sm-4">
-                    Subscribe
+                    Join Waitlist
                   </button>
                 </form>
+
+                <script>
+                  document.getElementById('waitlist-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('subscr-email').value;
+
+                    const response = await fetch('/.netlify/functions/submitted-emails', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                      },
+                      body: `email=${encodeURIComponent(email)}`,
+                    });
+
+                    const result = await response.json();
+                    console.log(result);
+                  });
+                </script>
+
               </div>
             </div>
           </div>

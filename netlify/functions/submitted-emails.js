@@ -73,12 +73,11 @@ exports.handler = async function (event, context) {
       body: 'Method Not Allowed',
     }
   }
-
+  console.log('Event received:', JSON.stringify(event))
   let email
   try {
     // Parse the form data (URL-encoded)
     const parsedBody = querystring.parse(event.body)
-    console.log(`eventBody: ${event.body}`)
     email = parsedBody.email
 
     // Log the parsed email for debugging

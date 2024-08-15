@@ -15,6 +15,9 @@ exports.handler = async function (event, context) {
     const querystring = require('querystring')
     const parsedBody = querystring.parse(event.body)
     email = parsedBody.email
+
+    // Log the email to the console for debugging
+    console.log('Parsed email:', email)
   } catch (error) {
     return {
       statusCode: 400,
@@ -23,7 +26,9 @@ exports.handler = async function (event, context) {
   }
 
   // Basic email validation
-  if (!email || !email.match(/^[^ ]+@[^ ]+\.[a-z]{2,3}$/)) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!email || !emailRegex.test(email)) {
+    console.log('Invalid email format:', email)
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Invalid email address' }),

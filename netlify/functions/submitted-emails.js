@@ -1,22 +1,22 @@
-// exports.handler = async function (event, context) {
-//   // Import node-fetch inside the handler
-//   const fetch = await (async () => (await import('node-fetch')).default)()
+// require('dotenv').config()
+// const fetch = require('node-fetch')
+// const querystring = require('querystring') // Ensure you require querystring at the top
 
+// exports.handler = async function (event, context) {
 //   if (event.httpMethod !== 'POST') {
 //     return {
 //       statusCode: 405,
 //       body: 'Method Not Allowed',
 //     }
 //   }
-
+//   console.log('Event received:', JSON.stringify(event))
 //   let email
 //   try {
-//     // Parse the form data
-//     const querystring = require('querystring')
+//     // Parse the form data (URL-encoded)
 //     const parsedBody = querystring.parse(event.body)
 //     email = parsedBody.email
 
-//     // Log the email to the console for debugging
+//     // Log the parsed email for debugging
 //     console.log('Parsed email:', email)
 //   } catch (error) {
 //     return {
@@ -36,18 +36,31 @@
 //   }
 
 //   try {
-//     const webhookUrl = process.env.ZAPIER_WEBHOOK_URL
-
-//     const response = await fetch(webhookUrl, {
+//     const response = await fetch('https://api.notion.com/v1/pages', {
 //       method: 'POST',
-//       body: JSON.stringify({ email }),
 //       headers: {
+//         Authorization: `Bearer ${process.env.NOTION_API_KEY}`,
 //         'Content-Type': 'application/json',
+//         'Notion-Version': '2022-06-28',
 //       },
+//       body: JSON.stringify({
+//         parent: { database_id: process.env.NOTION_DATABASE_ID },
+//         properties: {
+//           Email: {
+//             title: [
+//               {
+//                 text: {
+//                   content: email,
+//                 },
+//               },
+//             ],
+//           },
+//         },
+//       }),
 //     })
 
 //     if (!response.ok) {
-//       throw new Error('Failed to send email')
+//       throw new Error('Failed to add email to Notion')
 //     }
 
 //     return {
@@ -62,9 +75,10 @@
 //   }
 // }
 
+
 require('dotenv').config()
 const fetch = require('node-fetch')
-const querystring = require('querystring') // Ensure you require querystring at the top
+const querystring = require('querystring')
 
 exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
@@ -73,15 +87,18 @@ exports.handler = async function (event, context) {
       body: 'Method Not Allowed',
     }
   }
+
   console.log('Event received:', JSON.stringify(event))
-  let email
+  let email, dateTime
+
   try {
     // Parse the form data (URL-encoded)
     const parsedBody = querystring.parse(event.body)
     email = parsedBody.email
+    dateTime = parsedBody.dateTime
 
-    // Log the parsed email for debugging
-    console.log('Parsed email:', email)
+    // Log the parsed email and date/time for debugging
+    console.log('Parsed email:', email, 'Parsed dateTime:', dateTime)
   } catch (error) {
     return {
       statusCode: 400,
@@ -119,12 +136,20 @@ exports.handler = async function (event, context) {
               },
             ],
           },
+          DateTime: {
+            date: {
+              start: dateTime, // Send the dateTime as a date property
+            },
+          },
         },
       }),
     })
 
+    const responseBody = await response.text()
+    console.log('Notion API Response:', responseBody)
+
     if (!response.ok) {
-      throw new Error('Failed to add email to Notion')
+      throw new Error(`Failed to add email to Notion: ${response.statusText}`)
     }
 
     return {
@@ -132,6 +157,7 @@ exports.handler = async function (event, context) {
       body: JSON.stringify({ message: 'Email successfully submitted' }),
     }
   } catch (error) {
+    console.error('Error submitting to Notion:', error)
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal Server Error' }),

@@ -1,6 +1,8 @@
-const fetch = require('node-fetch')
+const fetch = (await import('node-fetch')).default
 
 exports.handler = async function (event, context) {
+  const webhookUrl = process.env.ZAPIER_WEBHOOK_URL
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -19,20 +21,16 @@ exports.handler = async function (event, context) {
   }
 
   try {
-    // Send email to Asana via Zapier webhook
-    const response = await fetch(
-      'https://hooks.zapier.com/hooks/catch/19810690/24jtkj3/',
-      {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
     if (!response.ok) {
-      throw new Error('Failed to send email to Asana')
+      throw new Error('Failed to send email')
     }
 
     return {

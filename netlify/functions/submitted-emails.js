@@ -62,8 +62,9 @@
 //   }
 // }
 
-require('dotenv').config()
+rrequire('dotenv').config()
 const fetch = require('node-fetch')
+const querystring = require('querystring') // Ensure you require querystring at the top
 
 exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
@@ -75,10 +76,12 @@ exports.handler = async function (event, context) {
 
   let email
   try {
-    const querystring = require('querystring')
+    // Parse the form data (URL-encoded)
     const parsedBody = querystring.parse(event.body)
+    console.log(`eventBody: ${event.body}`)
     email = parsedBody.email
 
+    // Log the parsed email for debugging
     console.log('Parsed email:', email)
   } catch (error) {
     return {

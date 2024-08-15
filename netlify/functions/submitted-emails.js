@@ -1,7 +1,7 @@
-const { default: fetch } = await import('node-fetch')
-const querystring = require('querystring')
-
 exports.handler = async function (event, context) {
+  // Import node-fetch inside the handler
+  const fetch = await (async () => (await import('node-fetch')).default)()
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -12,6 +12,7 @@ exports.handler = async function (event, context) {
   let email
   try {
     // Parse the form data
+    const querystring = require('querystring')
     const parsedBody = querystring.parse(event.body)
     email = parsedBody.email
   } catch (error) {

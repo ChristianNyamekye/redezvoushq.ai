@@ -762,12 +762,13 @@
                 >
                   <input
                     type="email"
-                    id="subscr-email"
+                    id="waitlist-email"
                     name="email"
                     class="form-control rounded-start ps-5"
                     placeholder="Your email"
                     required
                   />
+                  <input type="hidden" name="formType" value="waitlist" />
                   <button type="submit" class="btn btn-primary px-sm-4">
                     Join Waitlist
                   </button>
@@ -777,16 +778,17 @@
                   document.getElementById('waitlist-form').addEventListener('submit', async function(e) {
                     e.preventDefault();
 
-                    const email = document.getElementById('subscr-email').value;
+                    const email = document.getElementById('waitlist-email').value;
                     const dateTime = new Date().toISOString(); 
-                    console.log('Email:', email); // For debugging
+                    const formType = 'waitlist';
+                    console.log('Email:', email, dateTime); // For debugging
 
                     const response = await fetch('/.netlify/functions/submitted-emails', {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                       },
-                      body: new URLSearchParams({ email, dateTime }).toString(),
+                      body: new URLSearchParams({ email, dateTime, formType }).toString(),
                     });
 
                     const result = await response.json();
@@ -2059,6 +2061,7 @@
                     placeholder="Your email"
                     required
                   />
+                  <input type="hidden" name="formType" value="subscription" />
                   <i
                     class="bx bx-envelope fs-xl text-muted position-absolute top-50 start-0 translate-middle-y ms-3 zindex-5"
                   ></i>
@@ -2078,14 +2081,15 @@
 
                     const email = document.getElementById('subscr-email').value;
                     const dateTime = new Date().toISOString(); // Get current date and time in ISO format
-                    console.log('Email:', email, 'DateTime:', dateTime); // For debugging
+                    const formType = 'subscription';
+                    console.log('Email:', email, 'DateTime:', dateTime, formType); // For debugging
 
                     const response = await fetch('/.netlify/functions/submitted-emails', {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                       },
-                      body: new URLSearchParams({ email, dateTime }).toString(),
+                      body: new URLSearchParams({ email, dateTime, formType }).toString(),
                     });
 
                     const result = await response.json();

@@ -75,7 +75,6 @@
 //   }
 // }
 
-
 require('dotenv').config()
 const fetch = require('node-fetch')
 const querystring = require('querystring')
@@ -89,16 +88,24 @@ exports.handler = async function (event, context) {
   }
 
   console.log('Event received:', JSON.stringify(event))
-  let email, dateTime
+  let email, dateTime, formType
 
   try {
     // Parse the form data (URL-encoded)
     const parsedBody = querystring.parse(event.body)
     email = parsedBody.email
     dateTime = parsedBody.dateTime
+    formType = parsedBody.formType
 
-    // Log the parsed email and date/time for debugging
-    console.log('Parsed email:', email, 'Parsed dateTime:', dateTime)
+    // Log the parsed email, date/time, and form type for debugging
+    console.log(
+      'Parsed email:',
+      email,
+      'Parsed dateTime:',
+      dateTime,
+      'Form type:',
+      formType
+    )
   } catch (error) {
     return {
       statusCode: 400,
@@ -139,6 +146,11 @@ exports.handler = async function (event, context) {
           DateTime: {
             date: {
               start: dateTime, // Send the dateTime as a date property
+            },
+          },
+          FormType: {
+            select: {
+              name: formType, // Add the form type to the Notion database
             },
           },
         },

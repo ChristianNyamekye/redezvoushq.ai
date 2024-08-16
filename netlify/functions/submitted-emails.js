@@ -149,9 +149,13 @@ exports.handler = async function (event, context) {
             },
           },
           FormType: {
-            select: {
-              name: formType, // Add the form type to the Notion database
-            },
+            rich_text: [
+              {
+                text: {
+                  content: formType, // Send the formType as rich_text
+                },
+              },
+            ],
           },
         },
       }),

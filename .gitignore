@@ -22,3 +22,6 @@ bower_components/
 *.app
 *.exe
 *.war
+.env
+assets/vendor/dotenv/
+assets/vendor/node-fetch/
